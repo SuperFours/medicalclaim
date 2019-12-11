@@ -14,7 +14,10 @@ public class AppConstant {
 
 	// Common Httpstatus success and failure messages.
 	public static final String SUCCESS = "SUCCESS";
+	public static final String CLAIM_RAISED_SUCCESS = "Policy Claim Raised Successfully and send to First level approval";
 	public static final String FAILURE = "FAILURE";
+	public static final String CLAIM_NUMBER_ALREADY_EXIST = "Claim Number Already exist";
+	public static final String INITIAL_CLAIM_RAISED = "Initial Claim Raised";
 
 	// Hospital
 	public static final String NO_RECORDS_FOUND = "No Records Found";
@@ -25,5 +28,11 @@ public class AppConstant {
 
 	// Policy Details
 	public static final String NO_POLICIES_FOUND = "No Policies Found";
+	
+	public static final String CLAIM_NUMBER_PREFIX = "CN-";
+
+	public static final Integer APPROVAL_ID_1 = 1;
+	public static final Integer APPROVAL_ID_2 = 2;
+	
 
 }

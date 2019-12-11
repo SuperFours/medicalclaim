@@ -16,8 +16,9 @@ import com.medicalclaim.service.PolicyClaimService;
 
 /**
  * 
- * @author akuthota.raghu This ClaimController - is use to handle the all the
- *         REST API calls for Claim related things
+ * @author akuthota.raghu 
+ * @since 11-12-2019 
+ * This ClaimController - is use to handle the all the REST API calls for Claim related things
  *
  */
 @RestController
@@ -30,9 +31,8 @@ public class PolicyClaimController {
 	private PolicyClaimService policyClaimService;
 
 	/**
-	 * 
 	 * @param claim
-	 * @return
+	 * @return response entity of PolicyClaimResponseDto
 	 */
 	@PostMapping
 	public ResponseEntity<PolicyClaimResponseDto> createPolicyClaim(
@@ -48,7 +48,5 @@ public class PolicyClaimController {
 		}
 
 		return new ResponseEntity<>(policyClaimResponsetDto, HttpStatus.OK);
-
 	}
-
 }

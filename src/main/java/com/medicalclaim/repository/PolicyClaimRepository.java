@@ -8,4 +8,6 @@ import com.medicalclaim.entity.PolicyClaim;
 @Repository
 public interface PolicyClaimRepository extends JpaRepository<PolicyClaim, Integer> {
 
+	String  findByClaimNumber(String claimNumber);
+
 }
