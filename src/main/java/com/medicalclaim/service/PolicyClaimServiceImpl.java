@@ -1,5 +1,7 @@
 package com.medicalclaim.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -10,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.medicalclaim.constant.AppConstant;
+import com.medicalclaim.dto.ApprovalRequestDto;
 import com.medicalclaim.dto.PolicyClaimRequestDto;
 import com.medicalclaim.dto.PolicyClaimResponseDto;
+import com.medicalclaim.dto.ResponseDto;
 import com.medicalclaim.entity.Hospital;
 import com.medicalclaim.entity.Policy;
 import com.medicalclaim.entity.PolicyClaim;
@@ -23,8 +27,6 @@ import com.medicalclaim.repository.PolicyClaimRepository;
 import com.medicalclaim.repository.PolicyRepository;
 import com.medicalclaim.repository.UserRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * 
  * @author akuthota.raghu
@@ -32,11 +34,12 @@ import lombok.extern.slf4j.Slf4j;
  *        Raise Claim and other medical claim related things
  */
 @Service
-@Slf4j
 public class PolicyClaimServiceImpl implements PolicyClaimService {
 
-	/* created instance for PolicyClaimRepository
-		to call predefined JPA repository methods */
+	/*
+	 * created instance for PolicyClaimRepository to call predefined JPA repository
+	 * methods
+	 */
 	@Autowired
 	private PolicyRepository policyRepository;
 
@@ -51,6 +54,7 @@ public class PolicyClaimServiceImpl implements PolicyClaimService {
 
 	@Autowired
 	private PolicyClaimApprovalRepository policyClaimApprovalRepository;
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AppConstant.DATE_FORMAT_PATTERN);
 
 	/**
 	 * @param PolicyClaimRequestDto
@@ -59,7 +63,7 @@ public class PolicyClaimServiceImpl implements PolicyClaimService {
 	 */
 	@Override
 	@Transactional
-	public PolicyClaimResponseDto raisePolocyClaim(PolicyClaimRequestDto policyClaimRequestDto) {
+	public PolicyClaimResponseDto raisePolicyClaim(PolicyClaimRequestDto policyClaimRequestDto) {
 
 		PolicyClaim policyClaim = new PolicyClaim();
 
@@ -67,7 +71,6 @@ public class PolicyClaimServiceImpl implements PolicyClaimService {
 		Policy policy = policyRepository.findByPolicyNo(policyClaimRequestDto.getPolicyNo());
 		Optional<Hospital> hospital = hospitalRepository.findById(policyClaimRequestDto.getHospitalId());
 		Optional<Policy> isPolicy = Optional.ofNullable(policy);
-
 		if (isPolicy.isPresent() && hospital.isPresent()) {
 			policyClaim.setPolicyId(policy);
 			policyClaim.setHospitalId(hospital.get());
@@ -75,6 +78,7 @@ public class PolicyClaimServiceImpl implements PolicyClaimService {
 			String claimNumber = AppConstant.CLAIM_NUMBER_PREFIX + generatePolicyClaimNumber();
 			String claimNumberResponse = policyClaimRepository.findByClaimNumber(claimNumber);
 
+			policyClaim.setClaimDate(LocalDate.now());
 			if (claimNumberResponse == null) {
 				policyClaim.setClaimNumber(claimNumber);
 			} else {
@@ -87,16 +91,21 @@ public class PolicyClaimServiceImpl implements PolicyClaimService {
 			}
 
 			BeanUtils.copyProperties(policyClaimRequestDto, policyClaim);
+			// convert String to LocalDate
+			LocalDate admissionDate = LocalDate.parse(policyClaimRequestDto.getAdmissionDate(), formatter);
+			LocalDate dischargeDate = LocalDate.parse(policyClaimRequestDto.getDischargeDate(), formatter);
+
+			policyClaim.setAdmissionDate(admissionDate);
+			policyClaim.setDischargeDate(dischargeDate);
 
 			PolicyClaim savedPolicyClaim = policyClaimRepository.save(policyClaim);
 
 			PolicyClaimApproval policyClaimApproval = new PolicyClaimApproval();
 
 			policyClaimApproval.setPolicyClaimId(savedPolicyClaim);
-			policyClaimApproval.setApproval(false);
 			policyClaimApproval.setComments(AppConstant.INITIAL_CLAIM_RAISED);
 
-			User approvalLevelResponse = userRepository.findByApprovalLevel(AppConstant.APPROVAL_ID_1);
+			User approvalLevelResponse = userRepository.findByApprovalLevel(AppConstant.APPROVE_LEVEL_1);
 			policyClaimApproval.setClaimApprovalId(approvalLevelResponse);
 
 			policyClaimApprovalRepository.save(policyClaimApproval);
@@ -111,8 +120,50 @@ public class PolicyClaimServiceImpl implements PolicyClaimService {
 		return response;
 	}
 
+	@Override
+	public ResponseDto claimApproval(Integer claimId, ApprovalRequestDto approvalRequestDto) {
+		ResponseDto responseDto = new ResponseDto();
+		Optional<PolicyClaimApproval> policyClaimApproval = policyClaimApprovalRepository.findById(claimId);
+		if (policyClaimApproval.isPresent()) {
+			PolicyClaimApproval approval = policyClaimApproval.get();
+			approval.setComments(approvalRequestDto.getComments());
+			if (approvalRequestDto.getApproval().equals(AppConstant.APPROVE_CLAIM)) {
+				responseDto.setStatus(AppConstant.SUCCESS);
+				responseDto.setMessage(AppConstant.APPROVE_CLAIM_SUCCESS);
+				approval.setStatus(AppConstant.APPROVED);
+			} else {
+				responseDto.setStatus(AppConstant.SUCCESS);
+				responseDto.setMessage(AppConstant.REJECT_CLAIM_SUCCESS);
+				approval.setStatus(AppConstant.REJECTED);
+			}
+			policyClaimApprovalRepository.save(approval);
+
+			// Check and Send Second Level Approval
+			Optional<User> user = userRepository.findById(approvalRequestDto.getApprovalId());
+			if (user.isPresent()) {
+				Integer approvalLevelId = user.get().getApprovalLevel();
+				// Check ClaimAmount Value
+				Double policyCapAmount = approval.getPolicyClaimId().getPolicyId().getMaxClaimAmount();
+				Double claimAmount = approval.getPolicyClaimId().getClaimAmount();
+
+				if (approvalLevelId.equals(AppConstant.APPROVE_LEVEL_1) && (claimAmount > policyCapAmount)) {
+					User secondLevelUser = userRepository.findByApprovalLevel(AppConstant.APPROVE_LEVEL_2);
+					PolicyClaimApproval ciaimApproval = new PolicyClaimApproval();
+					ciaimApproval.setClaimApprovalId(secondLevelUser);
+					ciaimApproval.setPolicyClaimId(approval.getPolicyClaimId());
+					policyClaimApprovalRepository.save(ciaimApproval);
+				}
+			}
+		} else {
+			responseDto.setStatus(AppConstant.FAILURE);
+			responseDto.setMessage(AppConstant.NO_CLAIMS_FOUND);
+		}
+		return responseDto;
+	}
+
 	/**
 	 * This below method will generate the random number with length of 8
+	 * 
 	 * @return Long
 	 */
 	private Long generatePolicyClaimNumber() {

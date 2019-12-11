@@ -31,6 +31,6 @@ public class PolicyClaimApproval {
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "claim_approval_id")
 	private User claimApprovalId;
-	private boolean isApproval;
+	private String status;
 	private String comments;
 }

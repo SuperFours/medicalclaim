@@ -2,27 +2,36 @@ package com.medicalclaim.controller;
 
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.medicalclaim.constant.AppConstant;
+import com.medicalclaim.dto.ApprovalRequestDto;
 import com.medicalclaim.dto.PolicyClaimRequestDto;
 import com.medicalclaim.dto.PolicyClaimResponseDto;
+import com.medicalclaim.dto.ResponseDto;
 import com.medicalclaim.service.PolicyClaimService;
 
 /**
  * 
- * @author akuthota.raghu 
- * @since 11-12-2019 
- * This ClaimController - is use to handle the all the REST API calls for Claim related things
+ * @author akuthota.raghu
+ * @since 11-12-2019 This ClaimController - is use to handle the all the REST
+ *        API calls for Claim related things
  *
  */
 @RestController
 @RequestMapping("/claims")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+
 public class PolicyClaimController {
 
 	// creating reference for ClaimService
@@ -38,7 +47,7 @@ public class PolicyClaimController {
 	public ResponseEntity<PolicyClaimResponseDto> createPolicyClaim(
 			@RequestBody PolicyClaimRequestDto policyClaimRequestDto) {
 
-		PolicyClaimResponseDto policyClaimResponsetDto = policyClaimService.raisePolocyClaim(policyClaimRequestDto);
+		PolicyClaimResponseDto policyClaimResponsetDto = policyClaimService.raisePolicyClaim(policyClaimRequestDto);
 
 		Optional<String> responseDto = Optional.ofNullable(policyClaimResponsetDto.getStatus());
 		if (responseDto.isPresent()) {
@@ -48,5 +57,24 @@ public class PolicyClaimController {
 		}
 
 		return new ResponseEntity<>(policyClaimResponsetDto, HttpStatus.OK);
+	}
+
+	/**
+	 * claim approval with userId
+	 * 
+	 * @param approvalRequestDto
+	 * @return
+	 */
+	@PostMapping("/{claimId}/approval")
+	public ResponseEntity<ResponseDto> claimApproval(@PathVariable Integer claimId,
+			@Valid @RequestBody ApprovalRequestDto approvalRequestDto) {
+		ResponseDto responseDto = policyClaimService.claimApproval(claimId, approvalRequestDto);
+		if (responseDto.getStatus().equals(AppConstant.SUCCESS)) {
+			responseDto.setStatusCode(HttpStatus.OK.value());
+		} else {
+			responseDto.setStatusCode(HttpStatus.OK.value());
+		}
+		responseDto.setStatusCode(HttpStatus.NOT_FOUND.value());
+		return new ResponseEntity<>(responseDto, HttpStatus.OK);
 	}
 }

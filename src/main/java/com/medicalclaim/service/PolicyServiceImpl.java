@@ -39,11 +39,9 @@ public class PolicyServiceImpl implements PolicyService {
 		Optional<Policy> isPolicy = Optional.ofNullable(policy);
 		if (isPolicy.isPresent()) {
 			BeanUtils.copyProperties(policy, viewPolicyDto);
-			
+
 			PolicyClaim policyClaim = policy.getPolicyClaim();
-			viewPolicyDto.setClaimDate(policyClaim.getClaimDate());
-			viewPolicyDto.setClaimAmount(policyClaim.getClaimAmount());
-			
+			BeanUtils.copyProperties(policyClaim, viewPolicyDto);
 			Set<PolicyStatus> policyStatus = policy.getPolicyStatus();
 			List<PolicyStatusDto> policyStatusDto = policyStatus.stream().map(this::convertEntityToDto)
 					.collect(Collectors.toList());
@@ -56,6 +54,13 @@ public class PolicyServiceImpl implements PolicyService {
 		return viewPolicyDto;
 	}
 
+	/**
+	 * convert the policy status values to policy status dto values with using
+	 * beanutils copyproperties.
+	 * 
+	 * @param policyStatus
+	 * @return
+	 */
 	private PolicyStatusDto convertEntityToDto(PolicyStatus policyStatus) {
 		PolicyStatusDto policyStatusDto = new PolicyStatusDto();
 		BeanUtils.copyProperties(policyStatus, policyStatusDto);

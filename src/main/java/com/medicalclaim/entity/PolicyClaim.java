@@ -32,11 +32,13 @@ public class PolicyClaim {
 	@JoinColumn(name = "hospital_id")
 	private Hospital hospitalId;
 	private String diagosis;
+	private LocalDate claimDate;
 	private LocalDate admissionDate;
 	private String claimNumber;
 	private Double claimAmount;
 	private LocalDate dischargeDate;
 	private String dischargeDetail;
+	private String name;
 	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "policyClaimId")
 	private Set<PolicyClaimApproval> policyClaimApproval;
