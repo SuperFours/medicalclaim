@@ -1,6 +1,9 @@
 package com.medicalclaim.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.medicalclaim.constant.AppConstant;
 import com.medicalclaim.dto.PolicyClaimRequestDto;
 import com.medicalclaim.dto.PolicyClaimResponseDto;
+import com.medicalclaim.dto.ViewClaimDto;
 import com.medicalclaim.entity.Hospital;
 import com.medicalclaim.entity.Policy;
 import com.medicalclaim.entity.PolicyClaim;
@@ -23,8 +27,6 @@ import com.medicalclaim.repository.PolicyClaimRepository;
 import com.medicalclaim.repository.PolicyRepository;
 import com.medicalclaim.repository.UserRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * 
  * @author akuthota.raghu
@@ -32,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
  *        Raise Claim and other medical claim related things
  */
 @Service
-@Slf4j
 public class PolicyClaimServiceImpl implements PolicyClaimService {
 
 	/* created instance for PolicyClaimRepository
@@ -118,5 +119,32 @@ public class PolicyClaimServiceImpl implements PolicyClaimService {
 	private Long generatePolicyClaimNumber() {
 		String number = RandomStringUtils.random(8, false, true);
 		return Long.valueOf(number);
+	}
+	
+	@Override
+	public List<ViewClaimDto> claimListByUserId(Integer userId) {
+		List<ViewClaimDto> claimLists = new ArrayList<>();
+		Optional<User> userResponse = userRepository.findById(userId);
+
+		if (userResponse.isPresent()) {
+
+			List<PolicyClaimApproval> response=null;
+
+			response = policyClaimApprovalRepository
+					.findByClaimApprovalIdId(userResponse.get().getId());
+			
+			claimLists = response.stream().map(this::convertDto).collect(Collectors.toList());
+		}
+
+		return claimLists;
+	}
+
+	private ViewClaimDto convertDto(PolicyClaimApproval policyClaimApproval) {
+		ViewClaimDto viewClaimDto = new ViewClaimDto();
+		
+		viewClaimDto.setClaimAmount(policyClaimApproval.getPolicyClaimId().getClaimAmount());
+		viewClaimDto.setClaimDate(policyClaimApproval.getPolicyClaimId().getAdmissionDate());
+		viewClaimDto.setId(policyClaimApproval.getPolicyClaimId().getId());
+		return viewClaimDto;
 	}
 }

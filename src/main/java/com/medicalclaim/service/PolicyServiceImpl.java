@@ -41,7 +41,7 @@ public class PolicyServiceImpl implements PolicyService {
 			BeanUtils.copyProperties(policy, viewPolicyDto);
 			
 			PolicyClaim policyClaim = policy.getPolicyClaim();
-			viewPolicyDto.setClaimDate(policyClaim.getClaimDate());
+			viewPolicyDto.setClaimDate(policyClaim.getAdmissionDate());
 			viewPolicyDto.setClaimAmount(policyClaim.getClaimAmount());
 			
 			Set<PolicyStatus> policyStatus = policy.getPolicyStatus();
