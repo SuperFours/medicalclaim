@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.medicalclaim.constant.AppConstants;
+import com.medicalclaim.constant.AppConstant;
 import com.medicalclaim.dto.HospitalDto;
 import com.medicalclaim.dto.HospitalResponseDto;
 import com.medicalclaim.service.HospitalService;
@@ -29,8 +29,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @Slf4j
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/hospitals")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class HospitalController {
 
 	@Autowired
@@ -50,10 +50,10 @@ public class HospitalController {
 		Optional<List<HospitalDto>> isHospitalList = Optional.ofNullable(hospitalList);
 		hospitalResponseDto.setHospitals(hospitalList);
 		if (isHospitalList.isPresent()) {
-			hospitalResponseDto.setStatus(AppConstants.SUCCESS);
+			hospitalResponseDto.setStatus(AppConstant.SUCCESS);
 			hospitalResponseDto.setStatusCode(HttpStatus.OK.value());
 		} else {
-			hospitalResponseDto.setStatus(AppConstants.NO_RECORDS_FOUND);
+			hospitalResponseDto.setStatus(AppConstant.NO_RECORDS_FOUND);
 			hospitalResponseDto.setStatusCode(HttpStatus.NOT_FOUND.value());
 		}
 		return new ResponseEntity<>(hospitalResponseDto, HttpStatus.OK);

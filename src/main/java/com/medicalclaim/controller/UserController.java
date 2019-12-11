@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.medicalclaim.constant.AppConstants;
+import com.medicalclaim.constant.AppConstant;
 import com.medicalclaim.dto.LoginDto;
 import com.medicalclaim.dto.LoginResponseDto;
 import com.medicalclaim.entity.User;
@@ -49,9 +49,9 @@ public class UserController {
 		User user = userService.login(loginDto);
 		Optional<User> isUser = Optional.ofNullable(user);
 		if (isUser.isPresent()) {
-			response = new LoginResponseDto(AppConstants.SUCCESS, HttpStatus.OK.value(), AppConstants.LOGIN_SUCCESSFULLY);
+			response = new LoginResponseDto(AppConstant.SUCCESS, HttpStatus.OK.value(), AppConstant.LOGIN_SUCCESSFULLY);
 		} else {
-			response = new LoginResponseDto(AppConstants.FAILURE, HttpStatus.NOT_FOUND.value(), AppConstants.INVALID_LOGIN);
+			response = new LoginResponseDto(AppConstant.FAILURE, HttpStatus.NOT_FOUND.value(), AppConstant.INVALID_LOGIN);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
