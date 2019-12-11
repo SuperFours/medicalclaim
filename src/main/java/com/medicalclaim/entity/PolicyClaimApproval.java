@@ -17,7 +17,7 @@ import lombok.Setter;
 @Entity
 public class PolicyClaimApproval {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "policy_claim_id ")

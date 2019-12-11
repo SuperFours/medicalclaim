@@ -19,7 +19,7 @@ import lombok.Setter;
 @Entity
 public class Policy {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String policyNo;
 	private String policyHolderName;
@@ -28,8 +28,8 @@ public class Policy {
 	private LocalDate validTo;
 	private Double policyAmount;
 	private Double maxClaimAmount;
-	private String status;
-
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "policyId")
 	private Set<PolicyClaim> policyClaim;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "policyId")
+	private Set<PolicyStatus> policyStatus;
 }

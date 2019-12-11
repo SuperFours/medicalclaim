@@ -1,5 +1,7 @@
 package com.medicalclaim.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +40,11 @@ public class PolicyClaimController {
 		
 		PolicyClaimResponseDto policyClaimResponsetDto =  policyClaimService.raisePolocyClaim(policyClaimRequestDto);
 		
-		if(policyClaimResponsetDto != null) {
-			policyClaimResponsetDto.setStatus("Success");
+		Optional<String> responseDto = Optional.ofNullable(policyClaimResponsetDto.getStatus());
+		if(responseDto.isPresent()) {
 			policyClaimResponsetDto.setStatusCode(HttpStatus.OK.value());
+		}else {
+			policyClaimResponsetDto.setStatusCode(HttpStatus.BAD_REQUEST.value());
 		}
 		
 		return new ResponseEntity<>(policyClaimResponsetDto, HttpStatus.OK);

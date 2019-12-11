@@ -1,7 +1,5 @@
 package com.medicalclaim.entity;
 
-import java.time.LocalDate;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,7 +17,7 @@ import lombok.Setter;
 @Entity
 public class PolicyStatus {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "policy_id ")
