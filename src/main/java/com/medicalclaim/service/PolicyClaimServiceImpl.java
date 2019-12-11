@@ -2,7 +2,10 @@ package com.medicalclaim.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -16,6 +19,7 @@ import com.medicalclaim.dto.ApprovalRequestDto;
 import com.medicalclaim.dto.PolicyClaimRequestDto;
 import com.medicalclaim.dto.PolicyClaimResponseDto;
 import com.medicalclaim.dto.ResponseDto;
+import com.medicalclaim.dto.ViewClaimDto;
 import com.medicalclaim.entity.Hospital;
 import com.medicalclaim.entity.Policy;
 import com.medicalclaim.entity.PolicyClaim;
@@ -169,5 +173,32 @@ public class PolicyClaimServiceImpl implements PolicyClaimService {
 	private Long generatePolicyClaimNumber() {
 		String number = RandomStringUtils.random(8, false, true);
 		return Long.valueOf(number);
+	}
+	
+	@Override
+	public List<ViewClaimDto> claimListByUserId(Integer userId) {
+		List<ViewClaimDto> claimLists = new ArrayList<>();
+		Optional<User> userResponse = userRepository.findById(userId);
+
+		if (userResponse.isPresent()) {
+
+			List<PolicyClaimApproval> response=null;
+
+			response = policyClaimApprovalRepository
+					.findByClaimApprovalIdId(userResponse.get().getId());
+			
+			claimLists = response.stream().map(this::convertDto).collect(Collectors.toList());
+		}
+
+		return claimLists;
+	}
+
+	private ViewClaimDto convertDto(PolicyClaimApproval policyClaimApproval) {
+		ViewClaimDto viewClaimDto = new ViewClaimDto();
+		
+		viewClaimDto.setClaimAmount(policyClaimApproval.getPolicyClaimId().getClaimAmount());
+		viewClaimDto.setClaimDate(policyClaimApproval.getPolicyClaimId().getAdmissionDate());
+		viewClaimDto.setId(policyClaimApproval.getPolicyClaimId().getId());
+		return viewClaimDto;
 	}
 }

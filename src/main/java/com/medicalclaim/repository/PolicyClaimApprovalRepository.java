@@ -1,5 +1,7 @@
 package com.medicalclaim.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +17,7 @@ import com.medicalclaim.entity.PolicyClaimApproval;
 
 @Repository
 public interface PolicyClaimApprovalRepository  extends JpaRepository<PolicyClaimApproval, Integer>{
+	
+	List<PolicyClaimApproval> findByClaimApprovalIdId(Integer userId);
 
 }
