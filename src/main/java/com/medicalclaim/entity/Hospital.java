@@ -14,7 +14,7 @@ import lombok.Setter;
 public class Hospital {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private String id;
+	private Integer id;
 	private String code;
 	private String name;
 	private String address1;
