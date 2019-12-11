@@ -11,8 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.hcl.ecommerce.entity.StoreProduct;
-
 import lombok.Getter;
 import lombok.Setter;
 
