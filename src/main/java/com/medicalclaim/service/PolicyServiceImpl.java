@@ -13,6 +13,7 @@ import com.medicalclaim.constant.AppConstant;
 import com.medicalclaim.dto.PolicyStatusDto;
 import com.medicalclaim.dto.ViewPolicyDto;
 import com.medicalclaim.entity.Policy;
+import com.medicalclaim.entity.PolicyClaim;
 import com.medicalclaim.entity.PolicyStatus;
 import com.medicalclaim.repository.PolicyRepository;
 
@@ -38,7 +39,11 @@ public class PolicyServiceImpl implements PolicyService {
 		Optional<Policy> isPolicy = Optional.ofNullable(policy);
 		if (isPolicy.isPresent()) {
 			BeanUtils.copyProperties(policy, viewPolicyDto);
-
+			
+			PolicyClaim policyClaim = policy.getPolicyClaim();
+			viewPolicyDto.setClaimDate(policyClaim.getClaimDate());
+			viewPolicyDto.setClaimAmount(policyClaim.getClaimAmount());
+			
 			Set<PolicyStatus> policyStatus = policy.getPolicyStatus();
 			List<PolicyStatusDto> policyStatusDto = policyStatus.stream().map(this::convertEntityToDto)
 					.collect(Collectors.toList());

@@ -1,6 +1,6 @@
 package com.medicalclaim.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,11 +15,13 @@ import lombok.ToString;
 @NoArgsConstructor
 public class PolicyClaimRequestDto {
 	
-	private Integer policyId;
+	private String policyNo;
+	private String name;
 	private Integer hospitalId;
-	private String claimNumber;
-	private LocalDateTime claimDate;
+	private String diagosis;
+	private LocalDate admissionDate;
 	private Double claimAmount;
-	private String policyClaimApproval;
-
+	private LocalDate dischargeDate;
+	private String dischargeDetail;
+	private String ailmentDetail;
 }

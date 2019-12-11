@@ -1,6 +1,6 @@
 package com.medicalclaim.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -24,16 +25,19 @@ public class PolicyClaim {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "policy_id ")
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "policy_id")
 	private Policy policyId;
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "hospital_id")
 	private Hospital hospitalId;
+	private String diagosis;
+	private LocalDate admissionDate;
 	private String claimNumber;
-	private LocalDateTime claimDate;
 	private Double claimAmount;
-
+	private LocalDate dischargeDate;
+	private String dischargeDetail;
+	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "policyClaimId")
 	private Set<PolicyClaimApproval> policyClaimApproval;
 }

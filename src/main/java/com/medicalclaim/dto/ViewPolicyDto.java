@@ -1,6 +1,6 @@
 package com.medicalclaim.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.Getter;
@@ -13,9 +13,9 @@ public class ViewPolicyDto extends ResponseDto {
 	private String policyNo;
 	private String policyHolderName;
 	private String policyDependentName;
-	private LocalDate validFrom;
-	private LocalDate validTo;
 	private Double policyAmount;
+	private LocalDateTime claimDate;
+	private Double claimAmount;
 	private List<PolicyStatusDto> policyStatus;
 
 }

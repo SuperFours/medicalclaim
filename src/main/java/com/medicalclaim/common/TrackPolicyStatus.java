@@ -4,7 +4,6 @@ public class TrackPolicyStatus {
 
 	public enum TrackPolicy{
 	CG("Claim Generated"),
-	WA("Waiting for Approval"),
 	FA("1st Level Approved"),
 	SA("2st Level Approved"),
 	PR("Policy Rejected"),

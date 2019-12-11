@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,8 +29,8 @@ public class Policy {
 	private LocalDate validTo;
 	private Double policyAmount;
 	private Double maxClaimAmount;
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "policyId")
-	private Set<PolicyClaim> policyClaim;
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "policyId")
+	private PolicyClaim policyClaim;
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "policyId")
 	private Set<PolicyStatus> policyStatus;
 }
