@@ -1,11 +1,14 @@
 package com.medicalclaim.constant;
 
+import org.springframework.stereotype.Component;
+
 /**
  * @description AppConstant is used for only we are maintaining the argcoded
  *              values in the whole application.
  * @author Govindasamy.C
  * @since 11-12-2019
  */
+@Component
 public class AppConstant {
 
 	private AppConstant() {

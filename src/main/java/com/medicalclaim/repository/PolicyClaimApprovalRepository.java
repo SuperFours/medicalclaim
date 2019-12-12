@@ -18,6 +18,6 @@ import com.medicalclaim.entity.PolicyClaimApproval;
 @Repository
 public interface PolicyClaimApprovalRepository  extends JpaRepository<PolicyClaimApproval, Integer>{
 	
-	List<PolicyClaimApproval> findByClaimApprovalIdId(Integer userId);
+	List<PolicyClaimApproval> findByClaimApprovalIdIdAndStatusNull(Integer userId);
 
 }

@@ -76,9 +76,8 @@ public class PolicyClaimController {
 		if (responseDto.getStatus().equals(AppConstant.SUCCESS)) {
 			responseDto.setStatusCode(HttpStatus.OK.value());
 		} else {
-			responseDto.setStatusCode(HttpStatus.OK.value());
+			responseDto.setStatusCode(HttpStatus.NOT_FOUND.value());
 		}
-		responseDto.setStatusCode(HttpStatus.NOT_FOUND.value());
 		return new ResponseEntity<>(responseDto, HttpStatus.OK);
 	}
 

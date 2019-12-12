@@ -7,9 +7,9 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.medicalclaim.constant.AppConstant;
@@ -30,8 +30,8 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @RestController
-@RequestMapping("/users")
 @Slf4j
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserController {
 
 	@Autowired
@@ -45,13 +45,19 @@ public class UserController {
 	@PostMapping(value = "/login")
 	public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginDto loginDto) {
 		log.info("user login checks...");
-		LoginResponseDto response;
+		LoginResponseDto response = new LoginResponseDto();
 		User user = userService.login(loginDto);
 		Optional<User> isUser = Optional.ofNullable(user);
 		if (isUser.isPresent()) {
-			response = new LoginResponseDto(AppConstant.SUCCESS, HttpStatus.OK.value(), AppConstant.LOGIN_SUCCESSFULLY);
+			response.setStatus(AppConstant.SUCCESS);
+			response.setStatusCode(HttpStatus.OK.value());
+			response.setMessage(AppConstant.LOGIN_SUCCESSFULLY);
+			response.setUserId(user.getId());
+			response.setUserName(user.getUserName());
 		} else {
-			response = new LoginResponseDto(AppConstant.FAILURE, HttpStatus.NOT_FOUND.value(), AppConstant.INVALID_LOGIN);
+			response.setStatus(AppConstant.FAILURE);
+			response.setStatusCode(HttpStatus.NOT_FOUND.value());
+			response.setMessage(AppConstant.INVALID_LOGIN);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

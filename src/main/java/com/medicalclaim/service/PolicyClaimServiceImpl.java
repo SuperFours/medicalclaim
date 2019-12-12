@@ -107,7 +107,6 @@ public class PolicyClaimServiceImpl implements PolicyClaimService {
 			PolicyClaimApproval policyClaimApproval = new PolicyClaimApproval();
 
 			policyClaimApproval.setPolicyClaimId(savedPolicyClaim);
-			policyClaimApproval.setComments(AppConstant.INITIAL_CLAIM_RAISED);
 
 			User approvalLevelResponse = userRepository.findByApprovalLevel(AppConstant.APPROVE_LEVEL_1);
 			policyClaimApproval.setClaimApprovalId(approvalLevelResponse);
@@ -174,7 +173,7 @@ public class PolicyClaimServiceImpl implements PolicyClaimService {
 		String number = RandomStringUtils.random(8, false, true);
 		return Long.valueOf(number);
 	}
-	
+
 	@Override
 	public List<ViewClaimDto> claimListByUserId(Integer userId) {
 		List<ViewClaimDto> claimLists = new ArrayList<>();
@@ -182,23 +181,30 @@ public class PolicyClaimServiceImpl implements PolicyClaimService {
 
 		if (userResponse.isPresent()) {
 
-			List<PolicyClaimApproval> response=null;
+			List<PolicyClaimApproval> response = null;
 
-			response = policyClaimApprovalRepository
-					.findByClaimApprovalIdId(userResponse.get().getId());
-			
+			response = policyClaimApprovalRepository.findByClaimApprovalIdIdAndStatusNull(userResponse.get().getId());
+
 			claimLists = response.stream().map(this::convertDto).collect(Collectors.toList());
 		}
 
 		return claimLists;
 	}
 
+	/**
+	 * 
+	 * @param policyClaimApproval
+	 * @return
+	 */
 	private ViewClaimDto convertDto(PolicyClaimApproval policyClaimApproval) {
 		ViewClaimDto viewClaimDto = new ViewClaimDto();
-		
+		viewClaimDto.setClaimNumber(policyClaimApproval.getPolicyClaimId().getClaimNumber());
+		viewClaimDto.setName(policyClaimApproval.getPolicyClaimId().getName());
+		viewClaimDto.setPolicyNo(policyClaimApproval.getPolicyClaimId().getPolicyId().getPolicyNo());
+		viewClaimDto.setHospitalName(policyClaimApproval.getPolicyClaimId().getHospitalId().getName());
 		viewClaimDto.setClaimAmount(policyClaimApproval.getPolicyClaimId().getClaimAmount());
 		viewClaimDto.setClaimDate(policyClaimApproval.getPolicyClaimId().getAdmissionDate());
-		viewClaimDto.setId(policyClaimApproval.getPolicyClaimId().getId());
+		viewClaimDto.setId(policyClaimApproval.getId());
 		return viewClaimDto;
 	}
 }

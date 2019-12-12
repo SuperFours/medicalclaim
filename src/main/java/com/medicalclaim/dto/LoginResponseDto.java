@@ -11,10 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LoginResponseDto {
 
-	
-	public LoginResponseDto(int value) {
-		
-	}
+	private Integer userId;
+	private String userName;
 	private String status;
 	private int statusCode;
 	private String message;

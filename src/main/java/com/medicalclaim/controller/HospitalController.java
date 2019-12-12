@@ -19,8 +19,8 @@ import com.medicalclaim.service.HospitalService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @description HospitalController- controlling hospital entities and it has some methods
- * under the hospital entity
+ * @description HospitalController- controlling hospital entities and it has
+ *              some methods under the hospital entity
  * 
  * @author Janani.v
  * @since 11-12-2019
@@ -35,13 +35,13 @@ public class HospitalController {
 
 	@Autowired
 	HospitalService hospitalService;
-	
+
 	/**
-	 * @description getHospitalList method - implements the getAllHospitalList method 
-	 * Api response ids returing statsu code and status message
+	 * @description getHospitalList method - implements the getAllHospitalList
+	 *              method Api response ids returing statsu code and status message
 	 * @return list of hospitalList and status code and status message
 	 */
-	
+
 	@GetMapping
 	public ResponseEntity<HospitalResponseDto> getHospitalLists() {
 		List<HospitalDto> hospitalList = hospitalService.getAllHospital();
@@ -58,9 +58,5 @@ public class HospitalController {
 		}
 		return new ResponseEntity<>(hospitalResponseDto, HttpStatus.OK);
 	}
-		
 
-		
-	}
-
-
+}

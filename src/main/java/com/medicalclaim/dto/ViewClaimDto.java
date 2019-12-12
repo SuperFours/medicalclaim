@@ -10,6 +10,10 @@ import lombok.Setter;
 public class ViewClaimDto {
 
 	private Integer id;
+	private String name;
+	private String policyNo;
+	private String hospitalName;
+	private String claimNumber;
 	private LocalDate claimDate;
 	private Double claimAmount;
 }
